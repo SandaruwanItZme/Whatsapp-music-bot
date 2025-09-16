@@ -44,3 +44,39 @@ Edit the `.env` file to customize:
 - The first run will require you to scan a QR code to link your WhatsApp account
 - Audio conversion might take time depending on video length
 - Make sure your bot account has permission to send messages in the channel
+## Configuration
+
+The bot uses a `config/config.json` file for configuration. Here's what each setting does:
+
+### WhatsApp Settings
+- `channelJid`: Your WhatsApp channel JID (e.g., `1234567890@broadcast`)
+- `prefix`: Command prefix (default: ".")
+- `maxAudioDuration`: Maximum audio duration in seconds (default: 300 = 5 minutes)
+
+### YouTube Settings
+- `maxRetries`: Maximum download retry attempts
+- `requestTimeout`: Request timeout in milliseconds
+- `quality`: Audio quality preference
+
+### Audio Settings
+- `format`: Output audio format
+- `codec`: Audio codec
+- `sampleRate`: Sample rate in Hz
+- `channels`: Number of audio channels
+- `bitrate`: Audio bitrate
+
+### Path Settings
+- `auth`: Authentication data directory
+- `temp`: Temporary files directory
+- `logs`: Log files directory
+
+### Editing Configuration
+1. Open `config/config.json`
+2. Update the values as needed
+3. Restart the bot for changes to take effect
+
+### Environment Variables
+You can also use environment variables (which override config.json):
+- `CHANNEL_JID`: Your WhatsApp channel JID
+- `PREFIX`: Command prefix
+- `MAX_AUDIO_DURATION`: Maximum audio duration
