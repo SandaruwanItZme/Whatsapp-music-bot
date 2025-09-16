@@ -1,1 +1,51 @@
-
+{
+    "whatsapp": {
+        "channelJid": "your_channel_jid_here@broadcast",
+        "prefix": ".",
+        "maxAudioDuration": 300,
+        "reconnectTimeout": 5000,
+        "qrTimeout": 60000,
+        "connectionCheckInterval": 30000
+    },
+    "youtube": {
+        "maxRetries": 3,
+        "requestTimeout": 30000,
+        "highWaterMark": 33554432,
+        "quality": "highestaudio"
+    },
+    "audio": {
+        "format": "ogg",
+        "codec": "libopus",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitrate": "96k",
+        "maxFileSizeMB": 16
+    },
+    "ffmpeg": {
+        "path": "ffmpeg",
+        "timeout": 300000
+    },
+    "paths": {
+        "auth": "./auth_info",
+        "temp": "./temp",
+        "logs": "./logs"
+    },
+    "logging": {
+        "level": "info",
+        "file": "bot.log",
+        "maxFiles": 5,
+        "maxSize": "10m"
+    },
+    "security": {
+        "allowedUsers": [],
+        "adminUsers": [],
+        "blockedUsers": []
+    },
+    "features": {
+        "autoReconnect": true,
+        "cleanTempFiles": true,
+        "cleanupInterval": 3600000,
+        "statusUpdates": true,
+        "progressReports": true
+    }
+}
