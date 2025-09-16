@@ -1,83 +1,46 @@
-// src/utils.js
-
-const fs = require('fs');
-const path = require('path');
+// Additional utility functions for audio handling
 
 /**
- * Validate if a string is a valid YouTube URL
- * @param {string} url - The URL to validate
- * @returns {boolean} - True if valid YouTube URL
+ * Check if a file exists
+ * @param {string} filePath - Path to the file
+ * @returns {boolean} - True if file exists
  */
-function isValidYouTubeUrl(url) {
-    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
-    return youtubeRegex.test(url);
-}
-
-/**
- * Generate a unique filename for audio files
- * @param {string} url - YouTube URL
- * @returns {string} - Unique filename
- */
-function generateAudioFilename(url) {
-    const videoId = new URL(url).searchParams.get('v');
-    const timestamp = Date.now();
-    return `${videoId}_${timestamp}.ogg`;
-}
-
-/**
- * Clean up temporary files older than 1 hour
- */
-function cleanupTempFiles() {
-    const tempDir = path.join(__dirname, '..', 'temp');
-    
-    if (!fs.existsSync(tempDir)) {
-        return;
-    }
-    
-    const files = fs.readdirSync(tempDir);
-    const now = Date.now();
-    const oneHour = 60 * 60 * 1000;
-    
-    files.forEach(file => {
-        const filePath = path.join(tempDir, file);
-        const stats = fs.statSync(filePath);
-        
-        if (now - stats.mtimeMs > oneHour) {
-            fs.unlinkSync(filePath);
-            console.log(`Cleaned up temporary file: ${file}`);
-        }
-    });
-}
-
-/**
- * Format seconds into MM:SS format
- * @param {number} seconds - Duration in seconds
- * @returns {string} - Formatted duration
- */
-function formatDuration(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-}
-
-/**
- * Extract video ID from YouTube URL
- * @param {string} url - YouTube URL
- * @returns {string|null} - Video ID or null if invalid
- */
-function extractVideoId(url) {
+function fileExists(filePath) {
     try {
-        const urlObj = new URL(url);
-        return urlObj.searchParams.get('v');
+        return fs.existsSync(filePath);
     } catch (error) {
-        return null;
+        return false;
     }
 }
 
-module.exports = {
-    isValidYouTubeUrl,
-    generateAudioFilename,
-    cleanupTempFiles,
-    formatDuration,
-    extractVideoId
-};
+/**
+ * Get file size in MB
+ * @param {string} filePath - Path to the file
+ * @returns {number} - File size in MB
+ */
+function getFileSizeMB(filePath) {
+    try {
+        const stats = fs.statSync(filePath);
+        return stats.size / (1024 * 1024);
+    } catch (error) {
+        return 0;
+    }
+}
+
+/**
+ * Delete a file
+ * @param {string} filePath - Path to the file
+ * @returns {boolean} - True if deletion was successful
+ */
+function deleteFile(filePath) {
+    try {
+        if (fileExists(filePath)) {
+            fs.unlinkSync(filePath);
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('Error deleting file:', error);
+        return false;
+    }
+}
