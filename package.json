@@ -1,22 +1,24 @@
 {
   "name": "whatsapp-music-bot",
   "version": "1.0.0",
-  "description": "WhatsApp Music Bot with phone authentication",
-  "main": "index.js",
+  "description": "A WhatsApp bot that sends YouTube audio as voice messages to channels",
+  "main": "src/bot.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "install-deps": "npx playwright install chromium"
+    "start": "node src/bot.js",
+    "dev": "nodemon src/bot.js",
+    "setup": "npm install && cp .env.example .env"
   },
+  "keywords": ["whatsapp", "bot", "music", "voice-message"],
+  "author": "Your Name",
+  "license": "MIT",
   "dependencies": {
-    "whatsapp-web.js": "^1.23.0",
-    "qrcode-terminal": "^0.12.0",
+    "@whiskeysockets/baileys": "^6.4.0",
+    "dotenv": "^16.3.1",
     "ytdl-core": "^4.11.5",
-    "fluent-ffmpeg": "^2.1.2",
-    "ffmpeg-static": "^5.2.0",
-    "puppeteer": "^21.5.2"
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
   },
-  "engines": {
-    "node": "18.x"
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
