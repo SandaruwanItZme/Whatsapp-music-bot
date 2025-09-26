@@ -47,5 +47,15 @@
         "cleanupInterval": 3600000,
         "statusUpdates": true,
         "progressReports": true
+    },
+    "phoneAuth": {
+        "enabled": true,
+        "codeExpiry": 600000,
+        "maxAttempts": 3
+    },
+    "webServer": {
+        "port": 3000,
+        "enable": true 
     }
+    
 }
