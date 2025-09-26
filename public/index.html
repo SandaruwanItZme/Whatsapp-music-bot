@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Bot Phone Authentication</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
+        .container { border: 1px solid #ddd; padding: 20px; border-radius: 10px; }
+        input, button { padding: 10px; margin: 5px; width: 100%; box-sizing: border-box; }
+        button { background: #25D366; color: white; border: none; cursor: pointer; }
+        button:disabled { background: #ccc; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WhatsApp Bot Phone Authentication</h1>
+        
+        <div id="request-section">
+            <input type="tel" id="phoneNumber" placeholder="Enter your WhatsApp number" required>
+            <button onclick="requestCode()">Send Verification Code</button>
+        </div>
+        
+        <div id="verify-section" class="hidden">
+            <input type="text" id="verificationCode" placeholder="Enter 6-digit code" maxlength="6">
+            <button onclick="verifyCode()">Verify Code</button>
+            <button onclick="backToRequest()">Change Number</button>
+        </div>
+        
+        <div id="status"></div>
+    </div>
+
+    <script>
+        let currentVerificationId = '';
+        
+        async function requestCode() {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const statusDiv = document.getElementById('status');
+            
+            if (!phoneNumber) {
+                statusDiv.innerHTML = '<p style="color: red;">Please enter a phone number</p>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<p>Sending code...</p>';
+            
+            try {
+                const response = await fetch('/api/phone-auth/request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentVerificationId = data.verificationId;
+                    document.getElementById('request-section').classList.add('hidden');
+                    document.getElementById('verify-section').classList.remove('hidden');
+                    statusDiv.innerHTML = '<p style="color: green;">Code sent to your WhatsApp!</p>';
+                } else {
+                    statusDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function verifyCode() {
+            const code = document.getElementById('verificationCode').value;
+            const statusDiv = document.getElementById('status');
+            
+            if (!code || code.length !== 6) {
+                statusDiv.innerHTML = '<p style="color: red;">Please enter a valid 6-digit code</p>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<p>Verifying code...</p>';
+            
+            try {
+                const response = await fetch('/api/phone-auth/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        verificationId: currentVerificationId, 
+                        code: code 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.innerHTML = '<p style="color: green;">✅ Phone number verified successfully!</p>';
+                    document.getElementById('verify-section').classList.add('hidden');
+                } else {
+                    statusDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        function backToRequest() {
+            document.getElementById('request-section').classList.remove('hidden');
+            document.getElementById('verify-section').classList.add('hidden');
+            document.getElementById('status').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
