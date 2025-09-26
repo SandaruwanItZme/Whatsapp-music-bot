@@ -8,6 +8,12 @@ A WhatsApp bot that converts YouTube videos to audio and sends them as voice mes
 - Convert to WhatsApp-compatible voice message format
 - Send to specified WhatsApp channel with a single command
 - Simple command interface with prefix support
+- Secure code verification
+- Send verification codes via WhatsApp
+
+## Phone Number Authentication
+
+The bot now supports phone number authentication via a web interface.
 
 ## Setup
 
@@ -25,7 +31,18 @@ Send a message to the bot in this format:
 `.csong <youtube_url>`
 
 The bot will download the audio and send it as a voice message to your channel.
+1. Start the bot: `npm start`
+2. Visit: `http://localhost:3000`
+3. Enter your WhatsApp number
+4. Receive verification code via WhatsApp
+5. Enter the code on the web interface
 
+### API Endpoints:
+- `POST /api/phone-auth/request` - Request verification code
+- `POST /api/phone-auth/verify` - Verify code
+
+### WhatsApp Command:
+- `.phoneauth status` - Check authentication status
 ## Requirements
 
 - Node.js 16+
