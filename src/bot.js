@@ -2,6 +2,7 @@ require('dotenv').config();
 const { connectToWhatsApp } = require('./whatsappClient');
 const { handleIncomingMessage } = require('./commandHandler');
 const { loadConfig } = require('./utils');
+const { startWebServer } = require('./webServer'); // NEW
 
 // Load configuration
 const config = loadConfig();
@@ -10,10 +11,14 @@ const config = loadConfig();
 async function startBot() {
     try {
         console.log('Starting WhatsApp Music Bot...');
-        console.log(`Prefix: ${config.whatsapp.prefix}`);
-        console.log(`Channel JID: ${config.whatsapp.channelJid}`);
         
+        // Connect to WhatsApp
         const sock = await connectToWhatsApp();
+        
+        // Start web server for phone authentication
+        if (config.webServer && config.webServer.enable) {
+            startWebServer(sock, config);
+        }
         
         // Set up message handler
         sock.ev.on('messages.upsert', async (m) => {
@@ -21,7 +26,7 @@ async function startBot() {
         });
         
         console.log('WhatsApp Music Bot is running...');
-        console.log('Use Ctrl+C to stop the bot');
+        console.log('Phone authentication server: http://localhost:' + (config.webServer?.port || 3000));
         
     } catch (error) {
         console.error('Failed to start bot:', error);
@@ -33,22 +38,6 @@ async function startBot() {
 process.on('SIGINT', () => {
     console.log('\nShutting down WhatsApp Music Bot...');
     process.exit(0);
-});
-
-process.on('SIGTERM', () => {
-    console.log('\nReceived SIGTERM. Shutting down...');
-    process.exit(0);
-});
-
-// Handle uncaught exceptions
-process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error);
-    process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-    process.exit(1);
 });
 
 startBot();
