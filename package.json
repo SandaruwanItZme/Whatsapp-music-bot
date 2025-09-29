@@ -6,10 +6,10 @@
   "scripts": {
     "start": "node src/bot.js",
     "dev": "nodemon src/bot.js",
-    "setup": "npm install && cp .env.example .env"
+    "setup": "npm install"
   },
   "keywords": ["whatsapp", "bot", "music", "voice-message"],
-  "author": "Your Name",
+  "author": "Janaka",
   "license": "MIT",
   "dependencies": {
     "@whiskeysockets/baileys": "^6.4.0",
@@ -18,7 +18,7 @@
     "express": "^4.18.2",
     "cors": "^2.8.5"
   },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
