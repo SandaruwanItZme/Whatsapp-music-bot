@@ -1,0 +1,9 @@
+node_modules/
+auth_info/
+temp/
+.env
+*.log
+.DS_Store
+.env.local
+.env.production
+render.yaml
