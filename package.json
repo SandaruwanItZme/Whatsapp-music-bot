@@ -9,7 +9,7 @@
     "setup": "npm install"
   },
   "keywords": ["whatsapp", "bot", "music", "voice-message"],
-  "author": "Janaka",
+  "author": "itz sandu",
   "license": "MIT",
   "dependencies": {
     "@whiskeysockets/baileys": "^6.4.0",
