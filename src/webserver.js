@@ -8,12 +8,12 @@ let phoneAuthInstance = null;
 
 function startWebServer(sock, config) {
     const app = express();
-    const port = config.webServer?.port || 3000;
+    const port = process.env.PORT || config.webServer?.port || 3000;
     
     // Middleware
     app.use(cors());
     app.use(express.json());
-    app.use(express.static('public')); // Serve static files
+    app.use(express.static('public'));
     
     // Initialize phone authentication
     phoneAuthInstance = new PhoneAuth(sock);
@@ -21,6 +21,15 @@ function startWebServer(sock, config) {
     // Routes
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname, '../public/index.html'));
+    });
+    
+    // Health check endpoint for Railway
+    app.get('/health', (req, res) => {
+        res.json({ 
+            status: 'OK', 
+            service: 'WhatsApp Bot',
+            timestamp: new Date().toISOString()
+        });
     });
     
     // Phone authentication API
@@ -79,13 +88,15 @@ function startWebServer(sock, config) {
             success: true,
             phoneAuthEnabled: phoneAuthInstance.enabled,
             server: 'WhatsApp Bot Phone Auth API',
-            version: '1.0.0'
+            version: '1.0.0',
+            environment: process.env.NODE_ENV || 'development'
         });
     });
     
     // Start server
-    app.listen(port, () => {
-        console.log(`Phone authentication server running on http://localhost:${port}`);
+    app.listen(port, '0.0.0.0', () => {
+        console.log(`🌐 Phone authentication server running on port ${port}`);
+        console.log(`🔗 Web Interface: https://your-app-name.railway.app`);
     });
     
     return app;
