@@ -5,27 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhatsApp Bot Phone Authentication</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
-        .container { border: 1px solid #ddd; padding: 20px; border-radius: 10px; }
-        input, button { padding: 10px; margin: 5px; width: 100%; box-sizing: border-box; }
-        button { background: #25D366; color: white; border: none; cursor: pointer; }
-        button:disabled { background: #ccc; }
-        .hidden { display: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 450px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #25D366;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .primary-btn {
+            background: #25D366;
+            color: white;
+        }
+        
+        .primary-btn:hover:not(:disabled) {
+            background: #128C7E;
+        }
+        
+        .secondary-btn {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e1e1e1;
+        }
+        
+        .secondary-btn:hover {
+            background: #e9ecef;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 48px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>WhatsApp Bot Phone Authentication</h1>
+        <div class="logo">📱</div>
+        <h1>WhatsApp Bot Authentication</h1>
+        <p class="subtitle">Verify your phone number to use the bot</p>
         
         <div id="request-section">
-            <input type="tel" id="phoneNumber" placeholder="Enter your WhatsApp number" required>
-            <button onclick="requestCode()">Send Verification Code</button>
+            <input type="tel" id="phoneNumber" placeholder="Enter your WhatsApp number with country code" required>
+            <button class="primary-btn" onclick="requestCode()">Send Verification Code</button>
         </div>
         
         <div id="verify-section" class="hidden">
             <input type="text" id="verificationCode" placeholder="Enter 6-digit code" maxlength="6">
-            <button onclick="verifyCode()">Verify Code</button>
-            <button onclick="backToRequest()">Change Number</button>
+            <button class="primary-btn" onclick="verifyCode()">Verify Code</button>
+            <button class="secondary-btn" onclick="backToRequest()">Change Number</button>
         </div>
         
         <div id="status"></div>
@@ -39,11 +160,11 @@
             const statusDiv = document.getElementById('status');
             
             if (!phoneNumber) {
-                statusDiv.innerHTML = '<p style="color: red;">Please enter a phone number</p>';
+                showStatus('Please enter a phone number', 'error');
                 return;
             }
             
-            statusDiv.innerHTML = '<p>Sending code...</p>';
+            showStatus('Sending verification code to your WhatsApp...', 'info');
             
             try {
                 const response = await fetch('/api/phone-auth/request', {
@@ -58,12 +179,12 @@
                     currentVerificationId = data.verificationId;
                     document.getElementById('request-section').classList.add('hidden');
                     document.getElementById('verify-section').classList.remove('hidden');
-                    statusDiv.innerHTML = '<p style="color: green;">Code sent to your WhatsApp!</p>';
+                    showStatus('✅ Verification code sent to your WhatsApp!', 'success');
                 } else {
-                    statusDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                    showStatus(`Error: ${data.error}`, 'error');
                 }
             } catch (error) {
-                statusDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                showStatus(`Error: ${error.message}`, 'error');
             }
         }
         
@@ -72,11 +193,11 @@
             const statusDiv = document.getElementById('status');
             
             if (!code || code.length !== 6) {
-                statusDiv.innerHTML = '<p style="color: red;">Please enter a valid 6-digit code</p>';
+                showStatus('Please enter a valid 6-digit code', 'error');
                 return;
             }
             
-            statusDiv.innerHTML = '<p>Verifying code...</p>';
+            showStatus('Verifying code...', 'info');
             
             try {
                 const response = await fetch('/api/phone-auth/verify', {
@@ -91,21 +212,46 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    statusDiv.innerHTML = '<p style="color: green;">✅ Phone number verified successfully!</p>';
+                    showStatus('✅ Phone number verified successfully! You can now use the bot.', 'success');
                     document.getElementById('verify-section').classList.add('hidden');
                 } else {
-                    statusDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                    showStatus(`Error: ${data.error}`, 'error');
                 }
             } catch (error) {
-                statusDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                showStatus(`Error: ${error.message}`, 'error');
             }
         }
         
         function backToRequest() {
             document.getElementById('request-section').classList.remove('hidden');
             document.getElementById('verify-section').classList.add('hidden');
-            document.getElementById('status').innerHTML = '';
+            clearStatus();
         }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = message;
+            statusDiv.className = 'status ' + type;
+        }
+        
+        function clearStatus() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '';
+            statusDiv.className = 'status';
+        }
+        
+        // Enter key support
+        document.getElementById('phoneNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                requestCode();
+            }
+        });
+        
+        document.getElementById('verificationCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyCode();
+            }
+        });
     </script>
 </body>
 </html>
