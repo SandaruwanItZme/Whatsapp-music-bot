@@ -10,15 +10,16 @@ const config = loadConfig();
 // Start the bot
 async function startBot() {
     try {
-        console.log('🚀 Starting WhatsApp Music Bot on Railway...');
+        console.log('🚀 Starting WhatsApp Music Bot on Render...');
         console.log('📱 Environment:', process.env.NODE_ENV);
+        console.log('🌐 Port:', process.env.PORT || 10000);
         
         // Connect to WhatsApp
         const sock = await connectToWhatsApp();
         
         // Start web server for phone authentication
         if (config.webServer && config.webServer.enable) {
-            const port = process.env.PORT || config.webServer.port || 3000;
+            const port = process.env.PORT || config.webServer.port || 10000;
             startWebServer(sock, { ...config, webServer: { ...config.webServer, port } });
         }
         
@@ -27,7 +28,7 @@ async function startBot() {
             await handleIncomingMessage(m, sock, config);
         });
         
-        console.log('✅ WhatsApp Music Bot is running on Railway');
+        console.log('✅ WhatsApp Music Bot is running on Render');
         
     } catch (error) {
         console.error('❌ Failed to start bot:', error);
